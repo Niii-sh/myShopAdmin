@@ -56,7 +56,25 @@ export default {
           rememberMe:false,
           uuid:''
         },
-        loginRules:{},
+        //校验规则
+        loginRules:{
+          username:[{
+            required:true,   //是否需要校验
+            trigger:'blur', // 触发方式
+            message: '用户名不能为空', //提示信息
+          }],
+          password:[{
+            required:true,
+            trigger:'blur',
+            message:'密码不能为空'
+          }],
+          code: [{
+            required:true,
+            trigger:'blur',
+            message:'验证码不能为空'
+          }],
+
+        },
         Background: Background,
         codeUrl:'',
         loading: false,
@@ -76,16 +94,25 @@ export default {
 
       //处理登录请求
       handleLogin(){
-        //进行加密
-        this.loginForm.password = encrypt(this.loginForm.password)
-        console.log(this.loginForm.password)
 
-        this.$axios.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
-          //进行路由跳转
-          //在history 模式下 可以使用push返回
-          this.$router.push('/dashboard')
-          console.log(res)
+        this.$refs.loginForm.validate(vaild =>{
+          //如果表单校验通过则发送登录请求
+          if(vaild){
+            //进行加密
+            this.loginForm.password = encrypt(this.loginForm.password)
+            console.log(this.loginForm.password)
+
+            this.$axios.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
+              //进行路由跳转
+              //在history 模式下 可以使用push返回
+              this.$router.push('/dashboard')
+              console.log(res)
+            })
+          }else{
+            alert('请完善登录信息')
+          }
         })
+
       },
     }
   }
