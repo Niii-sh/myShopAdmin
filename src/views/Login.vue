@@ -36,9 +36,13 @@
   </div>
 </template>
 <script>
+import Cookies from 'js-cookie'
+import Config from '@/settings'
+
 import Background from '@/assets/images/background.jpg'
 // 引入加密 解密依赖
 import {encrypt,decrypt} from "@/utils/rsaEncrypt";
+import {setToken} from "@/store/auth";
 
 export default {
     name:"Login",
@@ -78,15 +82,34 @@ export default {
         Background: Background,
         codeUrl:'',
         loading: false,
+        //把加密后的密码 存放到cookie当中
+        cookiePass: ''
       }
     },
 
     methods:{
+
+      //用于获取cookie
+      getCookie(){
+        const username = Cookies.get('username')
+        let password = Cookies.get('password')
+        const rememberMe = Cookies.get('rememberMe')
+
+        //保存cookie中加密后的密码
+        this.cookiePass = password === undefined ? '':password
+        this.loginForm = {
+          username: username === undefined ? this.loginForm.username : username,
+          password: password,
+          rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+        }
+      },
+
       //验证码图片的getCode方法
       getCode(){
         this.loginForm.password = encrypt(this.loginForm.password)
         //发送请求给后端 需要用到axios
         this.$request.get('http://127.0.0.1:8000/auth/code').then(res=>{
+          setToken(res.data.token,this.loginForm.rememberMe)
           this.codeUrl = res.data.img
           this.loginForm.uuid = res.data.uuid
         })
@@ -98,9 +121,41 @@ export default {
         this.$refs.loginForm.validate(vaild =>{
           //如果表单校验通过则发送登录请求
           if(vaild){
-            //进行加密
-            this.loginForm.password = encrypt(this.loginForm.password)
-            console.log(this.loginForm.password)
+
+            const user = {
+              username: this.loginForm.username,
+              password: this.loginForm.password,
+              rememberMe: this.loginForm.rememberMe,
+              code:this.loginForm.code,
+              uuid:this.loginForm.uuid
+            }
+
+            if(user.password != this.cookiePass){
+              /**
+               * 如果密码 与 cookie中存储的密码不一致 则需要进行二次加密
+               * @type {对需要加密的数据进行加密}
+               */
+              user.password = encrypt(this.loginForm.password)
+            }
+
+            //如果勾选了 rememberMe 则将用户信息保存到cookie中
+            if(user.rememberMe){
+              Cookies.set('username',user.username,{
+                expires: Config.passCookieExpires
+              })
+
+              Cookies.set('password',user.password,{
+                expires: Config.passCookieExpires
+              })
+
+              Cookies.set('rememberMe',user.rememberMe,{
+                expires: Config.passCookieExpires
+              })
+            }else {
+              Cookies.remove('username')
+              Cookies.remove('password')
+              Cookies.remove('rememverMe')
+            }
 
             this.$request.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
               //进行路由跳转
