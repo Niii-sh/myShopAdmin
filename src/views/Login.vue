@@ -37,7 +37,10 @@
 </template>
 <script>
 import Background from '@/assets/images/background.jpg'
-  export default {
+// 引入加密 解密依赖
+import {encrypt,decrypt} from "@/utils/rsaEncrypt";
+
+export default {
     name:"Login",
 
     created() {
@@ -63,9 +66,9 @@ import Background from '@/assets/images/background.jpg'
     methods:{
       //验证码图片的getCode方法
       getCode(){
+        this.loginForm.password = encrypt(this.loginForm.password)
         //发送请求给后端 需要用到axios
         this.$axios.get('http://127.0.0.1:8000/auth/code').then(res=>{
-          console.log()
           this.codeUrl = res.data.img
           this.loginForm.uuid = res.data.uuid
         })
@@ -73,6 +76,10 @@ import Background from '@/assets/images/background.jpg'
 
       //处理登录请求
       handleLogin(){
+        //进行加密
+        this.loginForm.password = encrypt(this.loginForm.password)
+        console.log(this.loginForm.password)
+
         this.$axios.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
           //进行路由跳转
           //在history 模式下 可以使用push返回
