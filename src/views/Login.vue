@@ -86,7 +86,7 @@ export default {
       getCode(){
         this.loginForm.password = encrypt(this.loginForm.password)
         //发送请求给后端 需要用到axios
-        this.$axios.get('http://127.0.0.1:8000/auth/code').then(res=>{
+        this.$request.get('http://127.0.0.1:8000/auth/code').then(res=>{
           this.codeUrl = res.data.img
           this.loginForm.uuid = res.data.uuid
         })
@@ -102,7 +102,7 @@ export default {
             this.loginForm.password = encrypt(this.loginForm.password)
             console.log(this.loginForm.password)
 
-            this.$axios.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
+            this.$request.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
               //进行路由跳转
               //在history 模式下 可以使用push返回
               this.$router.push('/dashboard')
