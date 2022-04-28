@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <el-container>
+  <div style="height: 100%">
+    <el-container style="height: 100%">
       <el-aside width="200px">
         <el-menu
             default-active="2"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose">
+            class="el-menu-vertical-demo">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -40,17 +38,24 @@
         </el-menu>
       </el-aside>
 
-
-      <el-container>
-        <el-header>Header</el-header>
+      <el-container style="height: 100%">
+        <el-header style="text-align: right">
+          <el-dropdown style="font-size: large">
+            <i class="el-icon-setting" style="margin-right: 15px"></i>
+            <span style="color: purple"> Ni </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>个人信息</el-dropdown-item>
+              <el-dropdown-item @click.prevent.native="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-header>
         <!--  表格布局      -->
         <el-main>
           <el-table
               ref="multipleTable"
               :data="tableData"
               tooltip-effect="dark"
-              style="width: 100%"
-              @selection-change="handleSelectionChange">
+              style="width: 100%">
             <el-table-column
                 type="selection"
                 width="55">
