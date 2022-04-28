@@ -1,15 +1,15 @@
 <template>
   <div style="height: 100%">
     <el-container style="height: 100%">
-      <el-aside width="205px">
-        <el-menu style="font-family: myFont" >
+      <el-aside  width="220px">
+        <el-menu style="font-family: myFont" text-color="#87CEFA" >
           <!-- 具名插槽的用法    -->
-          <el-submenu :index="item.name" v-for="item in menuList">
+          <el-submenu :index="item.name" v-for="item in menuList" style="right: auto" >
             <template slot="title">
               <svg-icon slot="prefix" :icon-class="item.meta.icon"/>
               {{item.meta.title}}
             </template>
-            <el-menu-item :index="child.name" v-for="child in item.children" style="padding-left: 5px">
+            <el-menu-item :index="child.name" v-for="child in item.children" style="right: auto">
               <template slot="title">
                <svg-icon slot="prefix" :icon-class="child.meta.icon"/>{{child.meta.title}}
               </template>
