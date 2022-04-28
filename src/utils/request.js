@@ -3,6 +3,7 @@
  */
 import axios from "axios";
 import Element from "element-ui";
+import {getToken} from "@/store/auth";
 
 let request = axios.create()
 
@@ -22,5 +23,25 @@ request.interceptors.response.use(response=>{
         return Promise.reject(error)
     },
 )
+
+
+/**
+ * 添加请求拦截器 每次请求都加上token
+ * onFullfilled 成功时...
+ * onRejected   失败时...
+ */
+request.interceptors.request.use(config=>{
+        console.log('请求拦截')
+        if(getToken()){
+            config.headers['Authorization'] = getToken()
+        }
+        return config
+    },error => {
+        return Promise.reject(error)
+    }
+)
+
+
+
 
 export default request

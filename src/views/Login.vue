@@ -49,6 +49,7 @@ export default {
 
     created() {
       this.getCode()
+      this.getCookie()
     },
 
     data(){
@@ -97,10 +98,13 @@ export default {
 
         //保存cookie中加密后的密码
         this.cookiePass = password === undefined ? '':password
+        password = password === undefined ? this.loginForm.password : password
+
         this.loginForm = {
           username: username === undefined ? this.loginForm.username : username,
           password: password,
-          rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+          rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
+          code: ''
         }
       },
 
@@ -118,10 +122,9 @@ export default {
       //处理登录请求
       handleLogin(){
 
-        this.$refs.loginForm.validate(vaild =>{
+        this.$refs.loginForm.validate(valid =>{
           //如果表单校验通过则发送登录请求
-          if(vaild){
-
+          if(valid){
             const user = {
               username: this.loginForm.username,
               password: this.loginForm.password,
@@ -130,12 +133,8 @@ export default {
               uuid:this.loginForm.uuid
             }
 
-            if(user.password != this.cookiePass){
-              /**
-               * 如果密码 与 cookie中存储的密码不一致 则需要进行二次加密
-               * @type {对需要加密的数据进行加密}
-               */
-              user.password = encrypt(this.loginForm.password)
+            if(user.password !== this.cookiePass){
+              user.password = encrypt(user.password)
             }
 
             //如果勾选了 rememberMe 则将用户信息保存到cookie中
@@ -154,14 +153,18 @@ export default {
             }else {
               Cookies.remove('username')
               Cookies.remove('password')
-              Cookies.remove('rememverMe')
+              Cookies.remove('rememberMe')
             }
 
-            this.$request.post('http://127.0.0.1:8000/auth/login',this.loginForm).then(res=>{
+            this.$request.post('http://127.0.0.1:8000/auth/login',user).then(res=>{
+              console.log(res)
+              //将token存入 cookie
+              setToken(res.data.token,this.loginForm.rememberMe)
+              //setToken(res.data.token,this.loginForm)
               //进行路由跳转
               //在history 模式下 可以使用push返回
               this.$router.push('/dashboard')
-              console.log(res)
+
             })
           }else{
             alert('请完善登录信息')

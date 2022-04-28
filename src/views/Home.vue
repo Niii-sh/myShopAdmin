@@ -1,10 +1,33 @@
 <template>
-  <h2>Dashboard</h2>
+  <div>
+    <h2>Dashboard</h2>
+    <el-button @click.native.prevent ="logout">注销</el-button>
+    <el-button @click.native.prevent="getUserInfo">获取用户信息</el-button>
+  </div>
 </template>
 
 <script>
+  import {removeToken} from "@/store/auth";
+  import Config from "@/settings";
+
   export default {
-    name:'Dashboard'
+    name:'Dashboard',
+    methods:{
+      logout(){
+        //请求后端接口删除该用户的token 同时前端Cookies也要删除该用户
+        this.$request.delete('http://127.0.0.1:8000/auth/logout').then(res=>{
+            removeToken(Config.TokenKey)
+            this.$router.replace('/')
+        })
+      },
+
+      getUserInfo(){
+        this.$request.get('http://127.0.0.1:8000/auth/info').then(res=> {
+            console.log("获取用户信息成功");
+            console.log(res.data)
+        },err=>err)
+      }
+    }
   }
 </script>
 
