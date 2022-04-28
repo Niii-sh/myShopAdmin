@@ -155,6 +155,8 @@ export default {
               Cookies.remove('rememberMe')
             }
 
+            this.loading = true
+
             this.$request.post('http://127.0.0.1:8000/auth/login',user).then(res=>{
               console.log(res)
               //将token存入 cookie
@@ -163,7 +165,9 @@ export default {
               //进行路由跳转
               //在history 模式下 可以使用push返回
               this.$router.push('/dashboard')
-
+            }).catch(()=>{
+              this.loading = false
+              this.getCode()
             })
           }else{
             alert('请完善登录信息')
