@@ -3,13 +3,16 @@
     <el-container style="height: 100%">
       <el-aside width="205px">
         <el-menu style="font-family: myFont" >
-          <!-- 具名插槽的用法          -->
+          <!-- 具名插槽的用法    -->
           <el-submenu :index="item.name" v-for="item in menuList">
             <template slot="title">
+              <svg-icon slot="prefix" :icon-class="item.meta.icon"/>
               {{item.meta.title}}
             </template>
             <el-menu-item :index="child.name" v-for="child in item.children" style="padding-left: 5px">
-              <template slot="title">{{child.meta.title}}</template>
+              <template slot="title">
+               <svg-icon slot="prefix" :icon-class="child.meta.icon"/>{{child.meta.title}}
+              </template>
             </el-menu-item>
           </el-submenu>
         </el-menu>
