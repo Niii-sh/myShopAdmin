@@ -113,7 +113,6 @@ export default {
         this.loginForm.password = encrypt(this.loginForm.password)
         //发送请求给后端 需要用到axios
         this.$request.get('http://127.0.0.1:8000/auth/code').then(res=>{
-          setToken(res.data.token,this.loginForm.rememberMe)
           this.codeUrl = res.data.img
           this.loginForm.uuid = res.data.uuid
         })
