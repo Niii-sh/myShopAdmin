@@ -1,0 +1,10 @@
+/**
+    用于定义全局字体
+ */
+
+@font-face {
+    font-family: 'myFont';
+    src: url("../font/cangEr.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
