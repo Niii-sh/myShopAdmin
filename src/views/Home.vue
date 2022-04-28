@@ -11,7 +11,8 @@
             </template>
             <el-menu-item :index="child.name" v-for="child in item.children" style="right: auto">
               <template slot="title">
-               <svg-icon slot="prefix" :icon-class="child.meta.icon"/>{{child.meta.title}}
+               <svg-icon slot="prefix" :icon-class="child.meta.icon"/>
+                {{child.meta.title}}
               </template>
             </el-menu-item>
           </el-submenu>

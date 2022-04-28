@@ -164,7 +164,7 @@ export default {
               //setToken(res.data.token,this.loginForm)
               //进行路由跳转
               //在history 模式下 可以使用push返回
-              this.$router.push('/dashboard')
+              this.$router.push('/')
             }).catch(()=>{
               this.loading = false
               this.getCode()
