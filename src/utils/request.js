@@ -4,6 +4,7 @@
 import axios from "axios";
 import Element from "element-ui";
 import {getToken} from "@/store/auth";
+import {logout} from "@/utils/login";
 
 let request = axios.create()
 
@@ -18,6 +19,13 @@ request.interceptors.response.use(response=>{
     error => {
         //使用element ui 返回错误信息
         Element.Message.error('请求失败'+error)
+
+        let code = error.response.data.status
+        //如果认证失败 则实行注销操作
+        if(code === 401){
+            logout()
+        }
+        return Promise.reject(error)
 
         //一定要加这行代码
         return Promise.reject(error)
